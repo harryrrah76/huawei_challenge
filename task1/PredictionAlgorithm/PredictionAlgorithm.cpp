@@ -1,6 +1,7 @@
 // This file contains a template for the implementation of Robo prediction
 // algorithm
 #include <iostream>
+#include <string>
 #include "PredictionAlgorithm.hpp"
 
 struct RoboPredictor::RoboMemory
@@ -9,6 +10,7 @@ struct RoboPredictor::RoboMemory
   bool previous_predict;
   bool previous_predict_correct;
   bool current_predict;
+  int error_count;
   // Note that the size of this data structure can't exceed 64KiB!
 };
 
@@ -25,17 +27,36 @@ bool RoboPredictor::predictTimeOfDayOnNextPlanet(
   // automatically and printed together with accuracy at the end of the
   // evaluation (see main.cpp for more details).
   // Simple prediction policy: follow the spaceship computer's suggestions
-  bool current_predict;
   if (roboMemory_ptr->previous_predict_correct)
   {
-    roboMemory_ptr->current_predict = roboMemory_ptr->previous_predict;
+      roboMemory_ptr->current_predict = roboMemory_ptr->previous_predict;
+      roboMemory_ptr->error_count = 0;
   }
   else
   {
-    roboMemory_ptr->current_predict = !roboMemory_ptr->previous_predict;
+    roboMemory_ptr->error_count++;
+    if (roboMemory_ptr->error_count >= 2)
+    {
+      roboMemory_ptr->current_predict = !roboMemory_ptr->current_predict;
+      roboMemory_ptr->error_count = 0;
+    }
+    else
+    {
+      roboMemory_ptr->current_predict = roboMemory_ptr->previous_predict;
+    }
   }
-  
-  std::cout << nextPlanetID << " " << roboMemory_ptr->current_predict << std::endl;
+
+  std::string debug;
+  if (roboMemory_ptr->current_predict)
+  {
+    debug = "DAY";
+  }
+  else
+  {
+    debug = "NIGHT";
+  }
+
+  // std::cout << nextPlanetID << "  " << debug << std::endl;
 
   return roboMemory_ptr->current_predict;
 }
