@@ -14,23 +14,14 @@ struct RoboPredictor::RoboMemory
   // Note that the size of this data structure can't exceed 64KiB!
 };
 
+// ==================== 2 BIT BRANCH PREDICTOR ====================
 bool RoboPredictor::predictTimeOfDayOnNextPlanet(
     std::uint64_t nextPlanetID, bool spaceshipComputerPrediction)
 {
-  // Robo can consult data structures in its memory while predicting.
-  // Example: access Robo's memory with roboMemory_ptr-><your RoboMemory
-  // content>
-  // Robo can perform computations using any data in its memory during
-  // prediction. It is important not to exceed the computation cost threshold
-  // while making predictions and updating RoboMemory. The computation cost of
-  // prediction and updating RoboMemory is calculated by the playground
-  // automatically and printed together with accuracy at the end of the
-  // evaluation (see main.cpp for more details).
-  // Simple prediction policy: follow the spaceship computer's suggestions
   if (roboMemory_ptr->previous_predict_correct)
   {
-      roboMemory_ptr->current_predict = roboMemory_ptr->previous_predict;
-      roboMemory_ptr->error_count = 0;
+    roboMemory_ptr->current_predict = roboMemory_ptr->previous_predict;
+    roboMemory_ptr->error_count = 0;
   }
   else
   {
@@ -46,16 +37,16 @@ bool RoboPredictor::predictTimeOfDayOnNextPlanet(
     }
   }
 
-  std::string debug;
-  if (roboMemory_ptr->current_predict)
-  {
-    debug = "DAY";
-  }
-  else
-  {
-    debug = "NIGHT";
-  }
-
+  // ==================== DEBUG ====================
+  // std::string debug;
+  // if (roboMemory_ptr->current_predict)
+  // {
+  //   debug = "DAY";
+  // }
+  // else
+  // {
+  //   debug = "NIGHT";
+  // }
   // std::cout << nextPlanetID << "  " << debug << std::endl;
 
   return roboMemory_ptr->current_predict;
@@ -64,9 +55,6 @@ bool RoboPredictor::predictTimeOfDayOnNextPlanet(
 void RoboPredictor::observeAndRecordTimeofdayOnNextPlanet(
     std::uint64_t nextPlanetID, bool timeOfDayOnNextPlanet)
 {
-  // Robo can consult/update data structures in its memory
-  // Example: access Robo's memory with roboMemory_ptr-><your RoboMemory
-  // content>
   if (roboMemory_ptr->current_predict == timeOfDayOnNextPlanet)
   {
     roboMemory_ptr->previous_predict_correct = true;
@@ -77,14 +65,6 @@ void RoboPredictor::observeAndRecordTimeofdayOnNextPlanet(
   }
 
   roboMemory_ptr->previous_predict = roboMemory_ptr->current_predict;
-
-  // It is important not to exceed the computation cost threshold while making
-  // predictions and updating RoboMemory. The computation cost of prediction and
-  // updating RoboMemory is calculated by the playground automatically and
-  // printed together with accuracy at the end of the evaluation (see main.cpp
-  // for more details).
-
-  // Simple prediction policy: do nothing
 }
 
 //------------------------------------------------------------------------------
