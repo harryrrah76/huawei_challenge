@@ -1,35 +1,61 @@
 // This file contains a template for the implementation of Robo prediction
 // algorithm
-
+#include <iostream>
 #include "PredictionAlgorithm.hpp"
 
-struct RoboPredictor::RoboMemory {
+struct RoboPredictor::RoboMemory
+{
   // Place your RoboMemory content here
+  bool previous_predict;
+  bool previous_predict_correct;
+  bool current_predict;
   // Note that the size of this data structure can't exceed 64KiB!
 };
 
 bool RoboPredictor::predictTimeOfDayOnNextPlanet(
-    std::uint64_t nextPlanetID, bool spaceshipComputerPrediction) {
+    std::uint64_t nextPlanetID, bool spaceshipComputerPrediction)
+{
   // Robo can consult data structures in its memory while predicting.
   // Example: access Robo's memory with roboMemory_ptr-><your RoboMemory
   // content>
-
   // Robo can perform computations using any data in its memory during
   // prediction. It is important not to exceed the computation cost threshold
   // while making predictions and updating RoboMemory. The computation cost of
   // prediction and updating RoboMemory is calculated by the playground
   // automatically and printed together with accuracy at the end of the
   // evaluation (see main.cpp for more details).
-
   // Simple prediction policy: follow the spaceship computer's suggestions
-  return spaceshipComputerPrediction;
+  bool current_predict;
+  if (roboMemory_ptr->previous_predict_correct)
+  {
+    roboMemory_ptr->current_predict = roboMemory_ptr->previous_predict;
+  }
+  else
+  {
+    roboMemory_ptr->current_predict = !roboMemory_ptr->previous_predict;
+  }
+  
+  std::cout << nextPlanetID << " " << roboMemory_ptr->current_predict << std::endl;
+
+  return roboMemory_ptr->current_predict;
 }
 
 void RoboPredictor::observeAndRecordTimeofdayOnNextPlanet(
-    std::uint64_t nextPlanetID, bool timeOfDayOnNextPlanet) {
+    std::uint64_t nextPlanetID, bool timeOfDayOnNextPlanet)
+{
   // Robo can consult/update data structures in its memory
   // Example: access Robo's memory with roboMemory_ptr-><your RoboMemory
   // content>
+  if (roboMemory_ptr->current_predict == timeOfDayOnNextPlanet)
+  {
+    roboMemory_ptr->previous_predict_correct = true;
+  }
+  else
+  {
+    roboMemory_ptr->previous_predict_correct = false;
+  }
+
+  roboMemory_ptr->previous_predict = roboMemory_ptr->current_predict;
 
   // It is important not to exceed the computation cost threshold while making
   // predictions and updating RoboMemory. The computation cost of prediction and
@@ -39,7 +65,6 @@ void RoboPredictor::observeAndRecordTimeofdayOnNextPlanet(
 
   // Simple prediction policy: do nothing
 }
-
 
 //------------------------------------------------------------------------------
 // Please don't modify this file below
@@ -52,9 +77,11 @@ static_assert(
     "memory are ineligible. Please reduce the size of your RoboMemory struct.");
 
 // Declare constructor/destructor for RoboPredictor
-RoboPredictor::RoboPredictor() {
+RoboPredictor::RoboPredictor()
+{
   roboMemory_ptr = new RoboMemory;
 }
-RoboPredictor::~RoboPredictor() {
+RoboPredictor::~RoboPredictor()
+{
   delete roboMemory_ptr;
 }
