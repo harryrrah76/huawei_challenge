@@ -73,9 +73,6 @@ bool RoboPredictor::predictTimeOfDayOnNextPlanet(
     false_value = 0.0;
   }
 
-  // float true_value = (it_true != roboMemory_ptr->planets[nextPlanetID][roboMemory_ptr->previousPlanetID].end()) ? it_true->second : 0;
-  // float false_value = (it_false != roboMemory_ptr->planets[nextPlanetID][roboMemory_ptr->previousPlanetID].end()) ? it_false->second : 0;
-
   if (true_value == 0 && false_value == 0)
   {
     if (roboMemory_ptr->previous_predict_correct) // Accuracy: 74.81%, Cost: 2.07/planet
