@@ -4,6 +4,8 @@
  */
 
 #include <cstdint>
+#include <set>
+#include <map>
 
 struct RoboPredictor {
   struct RoboMemory;
@@ -14,6 +16,8 @@ struct RoboPredictor {
 
   void observeAndRecordTimeofdayOnNextPlanet(std::uint64_t nextPlanetID,
                                              bool timeOfDayOnNextPlanet);
+
+  std::map<int, std::map<int, std::map<bool, int>>> get_planets();
 
   //---------------------------------------------------------------------
   // Since the struct RoboMemory is implicitly defined in .cpp

@@ -6,16 +6,20 @@
  *   Prepared by Artemiy Margaritov <artemiy.margaritov@huawei.com>
  */
 
+#include "PredictionAlgorithm/PredictionAlgorithm.hpp"
+#include <set>
 #include "CmdlineArgumentParser.hpp"
 #include "DynamicInstructionCounting/DynamicInstructionCounting_API.hpp"
-#include "PredictionAlgorithm/PredictionAlgorithm.hpp"
 #include "Route.hpp"
 #include "SpaceshipComputer/SpaceshipComputer.hpp"
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
   // Parse command-line options
   CmdlineOptions cmdline_opts;
-  if (!parseComdlineOptions(argc, argv, cmdline_opts)) {
+  std::map<int, std::map<int, std::map<bool, int>>> planets;
+  if (!parseComdlineOptions(argc, argv, cmdline_opts))
+  {
     std::cout << "Can't parse command-line arguments" << std::endl;
     return 1;
   }
@@ -31,7 +35,8 @@ int main(int argc, char **argv) {
   std::cout << "Starting evaluation of Robo's prediction algorithm... "
             << std::endl;
   PlanetInfo nextPlanet;
-  while (route.readLineFromFile(nextPlanet)) {
+  while (route.readLineFromFile(nextPlanet))
+  {
     // Ask Spaceship computer for help
     bool spaceshipComputerPrediction =
         spaceshipComputer.predict(nextPlanet.planetID);
@@ -63,16 +68,46 @@ int main(int argc, char **argv) {
     // Update accuracy statistics
     route.updatePredictionAccuracyStatistics(prediction, nextPlanet.timeOfDay);
     // verbose output
-    if (cmdline_opts.isVerboseOutputEnabled) {
+    if (cmdline_opts.isVerboseOutputEnabled)
+    {
       std::cout << "Visited planet with ID " << nextPlanet.planetID
                 << " Predicted time-of-day " << prediction
                 << " Actual observed time-of-day " << nextPlanet.timeOfDay
                 << std::endl;
-    } else if (!cmdline_opts.isWithoutProgressBar) {
+    }
+    else if (!cmdline_opts.isWithoutProgressBar)
+    {
       // not verbose output
       route.displayProgressBar();
     }
   }
+  planets = roboPredictor.get_planets();
+  // Iterate over the outermost map
+  // for (const auto &outer_pair : planets)
+  // {
+  //   int outer_key = outer_pair.first;
+  //   const auto &middle_map = outer_pair.second;
+
+  //   // Iterate over the middle map
+  //   for (const auto &middle_pair : middle_map)
+  //   {
+  //     int middle_key = middle_pair.first;
+  //     const auto &inner_map = middle_pair.second;
+
+  //     // Iterate over the innermost map
+  //     for (const auto &inner_pair : inner_map)
+  //     {
+  //       bool inner_key = inner_pair.first;
+  //       int value = inner_pair.second;
+
+  //       // Print the keys and the value
+  //       std::cout << "Outer key: " << outer_key
+  //                 << ", Middle key: " << middle_key
+  //                 << ", Inner key: " << (inner_key ? "true" : "false")
+  //                 << ", Value: " << value << std::endl;
+  //     }
+  //   }
+  // }
   // Print total prediction accuracy
   route.printFinalPredictionAccuracy();
   // Print computational cost
